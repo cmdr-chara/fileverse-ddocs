@@ -1414,6 +1414,7 @@ const DdocEditor = forwardRef(
           className={cn(
             'w-full',
             !isPresentationMode ? 'color-bg-secondary' : 'color-bg-default',
+            theme === 'theme-ultra-dark' && 'theme-ultra-dark',
           )}
           style={{
             height: isFocusMode

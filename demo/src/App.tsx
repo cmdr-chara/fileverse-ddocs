@@ -7,7 +7,7 @@ import {
   useSyncExternalStore,
 } from 'react';
 import DdocEditor from '../../package/ddoc-editor';
-import type { FontDescriptor } from '../../package/types';
+import type { FontDescriptor, ThemeKey } from '../../package/types';
 import { Editor, JSONContent } from '@tiptap/react';
 import { SecondLevelNav } from './components/second-level-nav/second-level-nav';
 import { demoMenuTree } from './components/second-level-nav/menu-tree';
@@ -37,6 +37,7 @@ import {
   TagType,
   DynamicDropdown,
   ThemeToggle,
+  useTheme,
 } from '@fileverse/ui';
 import { useMediaQuery } from 'usehooks-ts';
 import { IComment } from '../../package/extensions/comment';
@@ -64,6 +65,15 @@ import { DevBar } from './components/DevBar';
 import { DocSwitcher } from './components/DocSwitcher';
 
 function App() {
+  const { theme } = useTheme();
+  const [isUltraDark, setIsUltraDark] = useState(false);
+  const editorTheme: ThemeKey = isUltraDark ? 'theme-ultra-dark' : theme;
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('theme-ultra-dark', isUltraDark);
+    return () => document.documentElement.classList.remove('theme-ultra-dark');
+  }, [isUltraDark]);
+
   // --- Document identity ---
   const [docId] = useState<string>(() => {
     const urlDocId = getDocIdFromURL();
@@ -561,6 +571,13 @@ function App() {
           </div>
         </div>
         <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            aria-pressed={isUltraDark}
+            onClick={() => setIsUltraDark((enabled) => !enabled)}
+          >
+            Ultra Dark
+          </Button>
           <ThemeToggle />
 
           {isMediaMax1280px ? (
@@ -887,6 +904,7 @@ function App() {
         }}
         onCollaboratorChange={onCollaboratorChange}
         documentStyling={documentStyling}
+        theme={editorTheme}
         isDDocOwner={isDDocOwner}
         viewerMode={isDDocOwner ? undefined : viewerMode}
         initialCommentAnchors={initialCommentAnchors}
